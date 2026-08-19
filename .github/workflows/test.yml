@@ -1,0 +1,49 @@
+name: Validate agent skills
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate required files and skill metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_files=("README.md" "AGENTS.md" ".github/copilot-instructions.md")
+          for file in "${required_files[@]}"; do
+            test -f "$file" || { echo "Missing required file: $file"; exit 1; }
+          done
+
+          skill_count=0
+          for skill_dir in .github/skills/*; do
+            test -d "$skill_dir" || continue
+            skill_count=$((skill_count + 1))
+            skill_file="$skill_dir/SKILL.md"
+            test -f "$skill_file" || { echo "Missing $skill_file"; exit 1; }
+            test "$(head -n 1 "$skill_file")" = "---" || { echo "Missing frontmatter in $skill_file"; exit 1; }
+            grep -Eq '^name: [a-z0-9]+(-[a-z0-9]+)*$' "$skill_file" || { echo "Invalid name in $skill_file"; exit 1; }
+            grep -Eq '^description: .+' "$skill_file" || { echo "Missing description in $skill_file"; exit 1; }
+
+            folder_name="$(basename "$skill_dir")"
+            metadata_name="$(sed -n 's/^name: //p' "$skill_file" | head -n 1)"
+            test "$folder_name" = "$metadata_name" || { echo "Folder/name mismatch in $skill_file"; exit 1; }
+          done
+
+          test "$skill_count" -gt 0 || { echo "No skills found"; exit 1; }
+
+          if grep -RFn '[TODO' README.md AGENTS.md .github/copilot-instructions.md .github/skills; then
+            echo "Unfinished template markers found"
+            exit 1
+          fi
+
+          echo "Validated $skill_count skills."
