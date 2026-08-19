@@ -1,0 +1,4 @@
+interface:
+  display_name: "TOEIC Agent"
+  short_description: "Analyze TOEIC results and study gaps"
+  default_prompt: "Use $toeic-agent to analyze these TOEIC results and build a study plan."
