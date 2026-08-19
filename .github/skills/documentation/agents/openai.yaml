@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation"
+  short_description: "Create and maintain accurate project docs"
+  default_prompt: "Use $documentation to update the project documentation for these changes."
