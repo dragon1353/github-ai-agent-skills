@@ -1,0 +1,4 @@
+interface:
+  display_name: "Folder Monitor Agent"
+  short_description: "Monitor folders and react to file changes"
+  default_prompt: "Use $folder-monitor-agent to design a safe folder monitoring workflow."
