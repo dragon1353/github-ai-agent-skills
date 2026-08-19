@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release"
+  short_description: "Prepare safe and traceable releases"
+  default_prompt: "Use $release to prepare and validate the next project release."
