@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security Audit"
+  short_description: "Find and prioritize security weaknesses"
+  default_prompt: "Use $security-audit to audit this change for practical security risks."
